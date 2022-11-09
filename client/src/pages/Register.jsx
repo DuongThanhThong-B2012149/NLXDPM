@@ -18,7 +18,10 @@ export default function Register() {
       password: password.current.value,
     };
     try {
-      const res = await authServices.registerApi(user);
+      const res = await authServices.post(
+        "http://localhost:8080/api/auth/register",
+        user
+      );
       if (res) {
         history.push("/login");
       }
