@@ -7,7 +7,12 @@ export default function Message({ message, own }) {
       <div className={own ? "message own" : "message"}>
         <Top>
           <img src={Avatar} alt="" />
-          <p>{message.text}</p>
+          {message.text.includes("http://") ||
+          message.text.includes("https://") ? (
+            <img src={message.text} alt="123" />
+          ) : (
+            <p>{message.text}</p>
+          )}
         </Top>
         <Bottom>{format(message.createdAt)}</Bottom>
       </div>

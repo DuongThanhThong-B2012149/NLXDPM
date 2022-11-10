@@ -14,8 +14,69 @@ export default function Messenger({ socket }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
+
   const user = useSelector((state) => state.user?.currentUser);
   const scrollRef = useRef();
+  const fileRef = useRef(null);
+  const [urlImage, setUrlImage] = useState("");
+  const [loadingImage, setLoadingImage] = useState(false);
+  const [file, setFile] = useState(null);
+  const handleSubmitFile = async (files) => {
+    if (!files) return;
+    const formData = new FormData();
+    formData.append("file", files[0]);
+    formData.append("upload_preset", "upload_file_tgdd");
+    setLoadingImage(true);
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/dehcucoor/image/upload",
+      formData
+    );
+
+    fileRef.current.value = "";
+    setUrlImage(res.data.url);
+    setLoadingImage(false);
+  };
+
+  const handleSendImage = async (imgUrl) => {
+    if (!imgUrl) return;
+
+    // Get receiverid
+    const receiverId = currentChat.members.find(
+      (member) => member !== user._id
+    );
+
+    // Emit message to receipt
+    socket.current.emit("sendMessage", {
+      senderId: user._id,
+      receiverId,
+      text: imgUrl,
+    });
+
+    const message = {
+      sender: user._id,
+      text: imgUrl,
+      conversationId: currentChat._id,
+    };
+
+    // Save
+    try {
+      const res = await axios.post("/messages", message);
+      setMessages([...messages, res.data]);
+      setNewMessage("");
+    } catch (err) {
+      console.log(err);
+    }
+
+    setUrlImage("");
+  };
+
+  useEffect(() => {
+    handleSubmitFile(file);
+  }, [file]);
+
+  useEffect(() => {
+    handleSendImage(urlImage);
+  }, [urlImage]);
 
   useEffect(() => {
     socket.current.on("getMessage", (data) => {
@@ -78,16 +139,26 @@ export default function Messenger({ socket }) {
     const receiverId = currentChat.members.find(
       (member) => member !== user._id
     );
+
     socket.current.emit("sendMessage", {
       senderId: user._id,
       receiverId,
       text: newMessage,
     });
+
     console.log(message, receiverId);
 
     try {
+      setMessages([
+        ...messages,
+        {
+          sender: user._id,
+          text: newMessage,
+          conversationId: currentChat._id,
+        },
+      ]);
       const res = await axios.post("/messages", message);
-      setMessages([...messages, res.data]);
+      console.log(res.data);
       setNewMessage("");
     } catch (err) {
       console.log(err);
@@ -133,6 +204,15 @@ export default function Messenger({ socket }) {
                     value={newMessage}
                   ></textarea>
                   <button onClick={handleSubmit}>Send</button>
+
+                  <div className="">
+                    <input
+                      ref={fileRef}
+                      type="file"
+                      onChange={(e) => setFile(e.target.files)}
+                    />
+                    {loadingImage && <h1>Loading....</h1>}
+                  </div>
                 </Bottom>
               </>
             ) : (
