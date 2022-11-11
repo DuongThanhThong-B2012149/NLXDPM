@@ -2,8 +2,8 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import ChatOnline from "../components/ChatOnline";
 import Conversation from "../components/Conversation";
+import MakeFriend from "../components/MakeFriend";
 import Message from "../components/Message";
 import Topbar from "../components/Topbar";
 
@@ -226,13 +226,7 @@ export default function Messenger({ socket }) {
           </ChatBoxWrapper>
         </ChatBox>
         <ChatOnlineStyled>
-          <div className="h">
-            <ChatOnline
-              onlineUsers={onlineUsers}
-              currentId={user._id}
-              setCurrentChat={setCurrentChat}
-            />
-          </div>
+          <MakeFriend />
         </ChatOnlineStyled>
       </Wrapper>
     </>
