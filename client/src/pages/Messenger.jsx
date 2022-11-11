@@ -23,6 +23,7 @@ export default function Messenger({ socket }) {
   const [file, setFile] = useState(null);
   const handleSubmitFile = async (files) => {
     if (!files) return;
+
     const formData = new FormData();
     formData.append("file", files[0]);
     formData.append("upload_preset", "upload_file_tgdd");
@@ -33,7 +34,9 @@ export default function Messenger({ socket }) {
     );
 
     fileRef.current.value = "";
+
     setUrlImage(res.data.url);
+
     setLoadingImage(false);
   };
 
@@ -58,7 +61,7 @@ export default function Messenger({ socket }) {
       conversationId: currentChat._id,
     };
 
-    // Save
+    // Save message to database
     try {
       const res = await axios.post("/messages", message);
       setMessages([...messages, res.data]);
