@@ -6,13 +6,15 @@ export default function Message({ message, own }) {
     <Wrapper>
       <div className={own ? "message own" : "message"}>
         <Top>
-          <img src={Avatar} alt="" />
-          {message.text.includes("http://") ||
-          message.text.includes("https://") ? (
-            <img src={message.text} alt="123" />
-          ) : (
-            <p>{message.text}</p>
-          )}
+          <img src={Avatar} alt="" className="iconImg" />
+          <div className="h">
+            {message.text.includes("http://") ||
+            message.text.includes("https://") ? (
+              <img src={message.text} alt="123" />
+            ) : (
+              <p>{message.text}</p>
+            )}
+          </div>
         </Top>
         <Bottom>{format(message.createdAt)}</Bottom>
       </div>
@@ -42,7 +44,14 @@ const Wrapper = styled.div`
 `;
 const Top = styled.div`
   display: flex;
-  img {
+  .h {
+    display: block;
+    img {
+      width: 200px;
+      margin-top: 5px;
+    }
+  }
+  .iconImg {
     width: 32px;
     height: 32px;
     border-radius: 50%;
