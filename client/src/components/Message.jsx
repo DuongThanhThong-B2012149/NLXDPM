@@ -44,6 +44,7 @@ const Wrapper = styled.div`
 `;
 const Top = styled.div`
   display: flex;
+  align-items: center;
   .h {
     display: block;
     img {

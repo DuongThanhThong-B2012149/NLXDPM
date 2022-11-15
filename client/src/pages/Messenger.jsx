@@ -1,3 +1,4 @@
+import { CircularProgress } from "@material-ui/core";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -160,9 +161,9 @@ export default function Messenger({ socket }) {
           conversationId: currentChat._id,
         },
       ]);
+      setNewMessage("");
       const res = await axios.post("/messages", message);
       console.log(res.data);
-      setNewMessage("");
     } catch (err) {
       console.log(err);
     }
@@ -206,15 +207,36 @@ export default function Messenger({ socket }) {
                     onChange={(e) => setNewMessage(e.target.value)}
                     value={newMessage}
                   ></textarea>
-                  <button onClick={handleSubmit}>Send</button>
+                  <button
+                    style={{
+                      margin: "0 4px",
+                    }}
+                    onClick={handleSubmit}
+                  >
+                    Send
+                  </button>
 
-                  <div className="">
+                  <div
+                    style={{
+                      position: "relative",
+                      margin: "0 4px",
+                    }}
+                    className=""
+                  >
+                    <button>Upload Image</button>
+
                     <input
+                      style={{
+                        opacity: 0,
+                        position: "absolute",
+                        left: 0,
+                        zIndex: 1,
+                      }}
                       ref={fileRef}
                       type="file"
                       onChange={(e) => setFile(e.target.files)}
                     />
-                    {loadingImage && <h1>Loading....</h1>}
+                    {loadingImage && <CircularProgress />}
                   </div>
                 </Bottom>
               </>
