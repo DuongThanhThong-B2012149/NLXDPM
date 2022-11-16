@@ -7,6 +7,8 @@ import Conversation from "../components/Conversation";
 import MakeFriend from "../components/MakeFriend";
 import Message from "../components/Message";
 import Topbar from "../components/Topbar";
+import { conservationServices } from "../services/ConservationServices";
+import { messageServices } from "../services/MessageServices";
 
 export default function Messenger({ socket }) {
   const [conversations, setConversations] = useState([]);
@@ -64,7 +66,7 @@ export default function Messenger({ socket }) {
 
     // Save message to database
     try {
-      const res = await axios.post("/messages", message);
+      const res = await messageServices.post("/messages", message);
       setMessages([...messages, res.data]);
       setNewMessage("");
     } catch (err) {
@@ -111,7 +113,9 @@ export default function Messenger({ socket }) {
   useEffect(() => {
     const getConversations = async () => {
       try {
-        const res = await axios.get("/conversations/" + user._id);
+        const res = await conservationServices.get(
+          `/conversations/${user._id}`
+        );
         setConversations(res.data);
       } catch (err) {
         console.log(err);
@@ -123,7 +127,7 @@ export default function Messenger({ socket }) {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const res = await axios.get("/messages/" + currentChat?._id);
+        const res = await messageServices.get(`/messages/${currentChat?._id}`);
         setMessages(res.data);
       } catch (err) {
         console.log(err);
@@ -150,8 +154,6 @@ export default function Messenger({ socket }) {
       text: newMessage,
     });
 
-    console.log(message, receiverId);
-
     try {
       setMessages([
         ...messages,
@@ -162,7 +164,7 @@ export default function Messenger({ socket }) {
         },
       ]);
       setNewMessage("");
-      const res = await axios.post("/messages", message);
+      const res = await messageServices.post("/messages", message);
       console.log(res.data);
     } catch (err) {
       console.log(err);
