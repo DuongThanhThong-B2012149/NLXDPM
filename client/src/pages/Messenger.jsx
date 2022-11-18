@@ -32,7 +32,7 @@ export default function Messenger({ socket }) {
     formData.append("upload_preset", "upload_file_tgdd");
     setLoadingImage(true);
     const res = await axios.post(
-      "https://api.cloudinary.com/v1_1/dehcucoor/image/upload",
+      "your_url_cloudinary",
       formData
     );
 
