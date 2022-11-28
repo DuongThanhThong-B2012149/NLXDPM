@@ -30,10 +30,13 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.currentUser = null;
     },
+    FOLLOW(state, action) {
+      state.currentUser.followings.push(action.payload);
+    },
   },
 });
 
-export const { login, loginSuccess, loginFailed, logout, FOLLOW, UNFOLLOW } =
+export const { login, loginSuccess, loginFailed, logout, FOLLOW } =
   authSlice.actions;
 
 const authReducer = authSlice.reducer;
