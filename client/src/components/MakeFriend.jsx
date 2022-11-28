@@ -8,10 +8,11 @@ export default function MakeFriend() {
   const currentUser = useSelector((state) => state.user.currentUser);
   const [maybe, setMaybe] = useState(undefined);
   const [conf, setConf] = useState(undefined);
-
+  console.log(currentUser);
   useEffect(() => {
     const fetchUser = async () => {
       const res = await axios.get("/users/all/user");
+      console.log({ res });
       if (conf) {
         setMaybe(
           res.data
@@ -33,10 +34,10 @@ export default function MakeFriend() {
   useEffect(() => {
     const fetchUser = async () => {
       const res = await axios.get("/confirm/" + currentUser._id);
+      console.log({ cofirm: res.data });
       if (res.data.length !== 0) {
         setConf(res.data);
       }
-      console.log(res.data);
     };
     fetchUser();
   }, [currentUser._id]);
