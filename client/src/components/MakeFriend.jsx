@@ -1,13 +1,15 @@
 import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Avtar from "../assets/avt.jpg";
+import { FOLLOW } from "../context/userSlice";
 export default function MakeFriend() {
   const currentUser = useSelector((state) => state.user.currentUser);
   const [maybe, setMaybe] = useState(undefined);
   const [conf, setConf] = useState(undefined);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -36,7 +38,6 @@ export default function MakeFriend() {
       if (res.data.length !== 0) {
         setConf(res.data);
       }
-      console.log(res.data);
     };
     fetchUser();
   }, [currentUser._id]);
@@ -50,13 +51,16 @@ export default function MakeFriend() {
     try {
       await axios.post("/confirm", newConfirm);
       setMaybe(maybe.filter((item) => item._id !== receiverId));
+      await axios.put(`/users/${receiverId}/follow`, {
+        userId: currentUser._id,
+      });
+      dispatch(FOLLOW(receiverId));
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleClickConFirm = async (id, senderId, receiverId) => {
-    console.log(id, receiverId);
     const newConversations = {
       senderId: receiverId,
       receiverId: senderId,
@@ -69,7 +73,7 @@ export default function MakeFriend() {
       console.log(error);
     }
   };
-  console.log(maybe, conf);
+  console.log(maybe?.filter((x) => !currentUser?.followings.includes(x._id)));
   return (
     <Wrapper>
       <div className="item">
